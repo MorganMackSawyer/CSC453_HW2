@@ -8,6 +8,8 @@ TOPIC_THRESHOLD = "threshold"
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
+        client.subscribe(TOPIC_LIGHTSENSOR)
+        client.subscribe(TOPIC_THRESHOLD)
         client.publish(TOPIC_STATUS, "online", qos=2, retain=True)
     else:
         print("Bad connection Returned code = ", rc)
@@ -25,20 +27,26 @@ def on_message(client, userdata, msg):
 broker = '172.20.10.3'
 port = 1883
 client = mqtt.Client("RaspberryPiA")
-client.on_connect = on_connect # call back function
+client.on_connect = on_connect
 client.on_disconnect = on_disconnect
 client.on_message = on_message
 
+client.will_set(
+    topic="Status/RaspberryPiA",
+    payload="offline",
+    qos=2,
+    retain=True
+)
 
 client.connect(broker, port)
 client.loop_start()
-client.subscribe(TOPIC_LIGHTSENSOR)
-client.subscribe(TOPIC_THRESHOLD)
-time.sleep(2)
+time.sleep(1)
 
-while 1:
-    user_input = input("")
-    if "Quit" == user_input:
-        client.loop_stop()
-        client.disconnect()
-        break
+try:
+    while 1:
+        user_input = input("")
+        if "Quit" == user_input:
+            client.loop_stop()
+            break
+except KeyboardInterrupt:
+    client.publish(TOPIC_STATUS, "offline", qos=2, retain=True)
