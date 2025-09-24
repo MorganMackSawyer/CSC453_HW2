@@ -48,7 +48,7 @@ def on_message(client, userdata, message):
 
       if message == "offline":
         # turn off led 2
-        GPIO.output(LED2, True)
+        GPIO.output(LED2, False)
         print("turn off led 2") 
     
     if message.topic == "Status/RaspberryPiC":
