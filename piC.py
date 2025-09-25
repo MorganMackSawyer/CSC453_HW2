@@ -43,8 +43,10 @@ def on_message(client, userdata, message):
 
     if flag and flag != lastSentStatus:
       client.publish("LightStatus", "TurnOn", qos=2, retain=True)
+      lastSentStatus = True
     elif not flag and flag != lastSentStatus:
       client.publish("LightStatus", "TurnOff", qos=2, retain=True)
+      lastSentStatus = False
 
 
   if message.topic == "LightStatus":
