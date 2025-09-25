@@ -32,11 +32,13 @@ def on_message(client, userdata, msg):
 
     if TURN_ON == topic:
         end_time = time.strftime("%H:%M:%S", time.localtime()) 
-        logging.info("LED1 was OFF from " + start_time + " - " + end_time)
+        with open("output.txt", "w") as f:
+            f.write("LED1 was OFF from " + start_time + " - " + end_time + "\n")
         start_time = end_time
     elif TURN_OFF == topic:
         end_time = time.strftime("%H:%M:%S", time.localtime()) 
-        logging.info("LED1 was ON from " + start_time + " to " + end_time)
+        with open("output.txt", "w") as f:
+            f.write("LED1 was ON from " + start_time + " - " + end_time + "\n")        
         start_time = end_time
     print(time.strftime("%H:%M:%S", time.localtime()) + ": " + topic + ": ", m_decode)
 
