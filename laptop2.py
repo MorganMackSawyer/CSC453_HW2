@@ -2,6 +2,15 @@
 import paho.mqtt.client as mqtt
 import time
 import logging
+import os
+
+file_path = 'app.log'  # Replace with the actual file path
+
+if os.path.exists(file_path):
+    os.remove(file_path)
+    print(f"File '{file_path}' successfully deleted.")
+else:
+    print(f"File '{file_path}' does not exist.")
 
 TURN_ON = "TurnOn"
 TURN_OFF = "TurnOff"
@@ -30,15 +39,13 @@ def on_message(client, userdata, msg):
     topic = msg.topic
     m_decode = str(msg.payload.decode("utf-8", "ignore"))
 
-    if TURN_ON == topic:
+    if TURN_ON == m_decode:
         end_time = time.strftime("%H:%M:%S", time.localtime()) 
-        with open("output.txt", "w") as f:
-            f.write("LED1 was OFF from " + start_time + " - " + end_time + "\n")
+        logging.info("LED1 was OFF from " + start_time + " - " + end_time)
         start_time = end_time
-    elif TURN_OFF == topic:
+    elif TURN_OFF == m_decode:
         end_time = time.strftime("%H:%M:%S", time.localtime()) 
-        with open("output.txt", "w") as f:
-            f.write("LED1 was ON from " + start_time + " - " + end_time + "\n")        
+        logging.info("LED1 was ON from " + start_time + " to " + end_time)
         start_time = end_time
     print(time.strftime("%H:%M:%S", time.localtime()) + ": " + topic + ": ", m_decode)
 
