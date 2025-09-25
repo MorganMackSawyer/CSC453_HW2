@@ -5,7 +5,7 @@ import logging
 
 TURN_ON = "TurnOn"
 TURN_OFF = "TurnOff"
-logging.basicConfig(level=logging.INFO, format='%(message)s')
+logging.basicConfig(filename='app.log', level=logging.INFO, format='%(message)s')
 start_time = time.strftime("%H:%M:%S", time.localtime()) 
 
 def on_connect(client, userdata, flags, rc):
@@ -38,7 +38,7 @@ def on_message(client, userdata, msg):
         end_time = time.strftime("%H:%M:%S", time.localtime()) 
         logging.info("LED1 was ON from " + start_time + " to " + end_time)
         start_time = end_time
-    print(time.strftime("%H:%M:%S", time.localtime()) + " - message received:", m_decode)
+    print(time.strftime("%H:%M:%S", time.localtime()) + ": " + topic + ": ", m_decode)
 
 
 broker = '172.20.10.3'
@@ -51,13 +51,8 @@ client.on_message = on_message
 
 client.connect(broker, port)
 time.sleep(2)
-client.loop_forever
-
-while 1:
-    user_input = input("")
-    client.publish("LightStatus", user_input)
-    if "Quit" == user_input:
-        client.loop_stop()
-        client.disconnect()
-        break
+try:
+    client.loop_forever()
+except KeyboardInterrupt:
+    client.disconnect()
 
